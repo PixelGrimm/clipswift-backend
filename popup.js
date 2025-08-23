@@ -5,7 +5,7 @@ let currentCategory = 'all';
 let searchQuery = '';
 let currentTheme = 'light';
 // API key for OpenAI - this is your OpenAI API key
-let openaiApiKey = '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';
+let openaiApiKey = 'YOUR_OPENAI_API_KEY_HERE'; // Replace with your actual API key
 
 // User tier management
 let userTier = 'free'; // 'free' or 'premium'

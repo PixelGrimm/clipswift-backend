@@ -27,8 +27,8 @@ async function createPromotionCodes() {
             'WELCOME10': { percent_off: 10, duration: 'once' },
             'LAUNCH20': { percent_off: 20, duration: 'once' },
             'SAVE50': { percent_off: 50, duration: 'once' },
-            'FREETRIAL': { percent_off: 99, duration: 'repeating', duration_in_months: 1 }, // 99% off for 1 month (£0.08), then full price
-            'FREE100': { percent_off: 99, duration: 'once' } // 99% off forever (£0.08 one-time)
+            'FREETRIAL': { percent_off: 100, duration: 'repeating', duration_in_months: 1 }, // 100% off for 1 month, then full price
+            'FREE100': { percent_off: 100, duration: 'once' } // 100% off forever (one-time)
         };
 
         for (const [code, config] of Object.entries(coupons)) {
@@ -265,6 +265,89 @@ app.get('/test-discount/:code', async (req, res) => {
     } catch (error) {
         console.error('❌ Error testing discount code:', error);
         res.status(500).json({ error: 'Failed to test discount code', details: error.message });
+    }
+});
+
+// Track promotion code usage
+app.get('/track-promotion/:code', async (req, res) => {
+    try {
+        const { code } = req.params;
+        console.log('📊 Tracking promotion code usage:', code);
+        
+        // Get promotion codes with this code
+        const promotionCodes = await stripe.promotionCodes.list({ code: code });
+        
+        if (promotionCodes.data.length === 0) {
+            return res.status(404).json({ error: 'Promotion code not found' });
+        }
+        
+        const promotionCode = promotionCodes.data[0];
+        
+        // Get detailed info about the promotion code
+        const detailedPromoCode = await stripe.promotionCodes.retrieve(promotionCode.id);
+        
+        res.json({
+            code: code,
+            promotionCodeId: promotionCode.id,
+            active: detailedPromoCode.active,
+            coupon: detailedPromoCode.coupon,
+            usageCount: detailedPromoCode.usage_count,
+            maxRedemptions: detailedPromoCode.max_redemptions,
+            timesRedeemed: detailedPromoCode.times_redeemed,
+            restrictions: detailedPromoCode.restrictions,
+            metadata: detailedPromoCode.metadata
+        });
+    } catch (error) {
+        console.error('❌ Error tracking promotion code:', error);
+        res.status(500).json({ error: 'Failed to track promotion code', details: error.message });
+    }
+});
+
+// Get all promotion codes usage
+app.get('/track-all-promotions', async (req, res) => {
+    try {
+        console.log('📊 Tracking all promotion codes usage');
+        
+        const codes = ['WELCOME10', 'LAUNCH20', 'SAVE50', 'FREETRIAL', 'FREE100'];
+        const results = [];
+        
+        for (const code of codes) {
+            try {
+                const promotionCodes = await stripe.promotionCodes.list({ code: code });
+                
+                if (promotionCodes.data.length > 0) {
+                    const promotionCode = promotionCodes.data[0];
+                    const detailedPromoCode = await stripe.promotionCodes.retrieve(promotionCode.id);
+                    
+                    results.push({
+                        code: code,
+                        promotionCodeId: promotionCode.id,
+                        active: detailedPromoCode.active,
+                        usageCount: detailedPromoCode.usage_count,
+                        timesRedeemed: detailedPromoCode.times_redeemed,
+                        maxRedemptions: detailedPromoCode.max_redemptions
+                    });
+                } else {
+                    results.push({
+                        code: code,
+                        error: 'Not found'
+                    });
+                }
+            } catch (error) {
+                results.push({
+                    code: code,
+                    error: error.message
+                });
+            }
+        }
+        
+        res.json({
+            message: 'All promotion codes usage tracked',
+            results: results
+        });
+    } catch (error) {
+        console.error('❌ Error tracking all promotion codes:', error);
+        res.status(500).json({ error: 'Failed to track all promotion codes', details: error.message });
     }
 });
 

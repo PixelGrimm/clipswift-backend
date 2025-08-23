@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ClipSwift Icon Generator</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #f0f0f0; }
+        .icon-container { display: inline-block; margin: 10px; background: white; padding: 10px; border-radius: 8px; }
+        .icon-container h3 { margin: 0 0 10px 0; text-align: center; }
+        .download-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .download-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>ClipSwift Icon Generator</h1>
+    <p>Click the download buttons to save the PNG files:</p>
+    
+    <div class="icon-container">
+        <h3>128x128</h3>
+        <svg id="icon128" width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="128" height="128" fill="#1F2937"/>
+            <text x="64" y="80" 
+                  font-family="Arial, sans-serif" 
+                  font-size="80" 
+                  text-anchor="middle" 
+                  fill="#FCD34D"
+                  filter="drop-shadow(0 0 8px #F59E0B)">
+                ⚡
+            </text>
+        </svg>
+        <button class="download-btn" onclick="downloadIcon('icon128', 'icon128.png')">Download 128x128 PNG</button>
+        <button class="download-btn" onclick="downloadIconBlob('icon128', 'icon128.svg')" style="background: #28a745; margin-top: 5px;">Download 128x128 SVG</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>48x48</h3>
+        <svg id="icon48" width="48" height="48" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="128" height="128" fill="#1F2937"/>
+            <text x="64" y="80" 
+                  font-family="Arial, sans-serif" 
+                  font-size="80" 
+                  text-anchor="middle" 
+                  fill="#FCD34D"
+                  filter="drop-shadow(0 0 8px #F59E0B)">
+                ⚡
+            </text>
+        </svg>
+        <button class="download-btn" onclick="downloadIcon('icon48', 'icon48.png')">Download 48x48 PNG</button>
+        <button class="download-btn" onclick="downloadIconBlob('icon48', 'icon48.svg')" style="background: #28a745; margin-top: 5px;">Download 48x48 SVG</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>32x32</h3>
+        <svg id="icon32" width="32" height="32" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="128" height="128" fill="#1F2937"/>
+            <text x="64" y="80" 
+                  font-family="Arial, sans-serif" 
+                  font-size="80" 
+                  text-anchor="middle" 
+                  fill="#FCD34D"
+                  filter="drop-shadow(0 0 8px #F59E0B)">
+                ⚡
+            </text>
+        </svg>
+        <button class="download-btn" onclick="downloadIcon('icon32', 'icon32.png')">Download 32x32 PNG</button>
+        <button class="download-btn" onclick="downloadIconBlob('icon32', 'icon32.svg')" style="background: #28a745; margin-top: 5px;">Download 32x32 SVG</button>
+    </div>
+    
+    <div class="icon-container">
+        <h3>16x16</h3>
+        <svg id="icon16" width="16" height="16" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="128" height="128" fill="#1F2937"/>
+            <text x="64" y="80" 
+                  font-family="Arial, sans-serif" 
+                  font-size="80" 
+                  text-anchor="middle" 
+                  fill="#FCD34D"
+                  filter="drop-shadow(0 0 8px #F59E0B)">
+                ⚡
+            </text>
+        </svg>
+        <button class="download-btn" onclick="downloadIcon('icon16', 'icon16.png')">Download 16x16 PNG</button>
+        <button class="download-btn" onclick="downloadIconBlob('icon16', 'icon16.svg')" style="background: #28a745; margin-top: 5px;">Download 16x16 SVG</button>
+    </div>
+
+    <script>
+        function downloadIcon(svgId, filename) {
+            try {
+                const svg = document.getElementById(svgId);
+                if (!svg) {
+                    alert('SVG element not found: ' + svgId);
+                    return;
+                }
+                
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                // Set canvas size based on SVG size
+                const size = parseInt(svg.getAttribute('width'));
+                canvas.width = size;
+                canvas.height = size;
+                
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0);
+                    const pngFile = canvas.toDataURL('image/png');
+                    
+                    const downloadLink = document.createElement('a');
+                    downloadLink.download = filename;
+                    downloadLink.href = pngFile;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                };
+                
+                img.onerror = function() {
+                    alert('Error loading image for ' + filename);
+                };
+                
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+            } catch (error) {
+                alert('Error downloading ' + filename + ': ' + error.message);
+                console.error('Download error:', error);
+            }
+        }
+        
+        // Alternative method using blob
+        function downloadIconBlob(svgId, filename) {
+            try {
+                const svg = document.getElementById(svgId);
+                if (!svg) {
+                    alert('SVG element not found: ' + svgId);
+                    return;
+                }
+                
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const blob = new Blob([svgData], {type: 'image/svg+xml'});
+                const url = URL.createObjectURL(blob);
+                
+                const downloadLink = document.createElement('a');
+                downloadLink.download = filename.replace('.png', '.svg');
+                downloadLink.href = url;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                alert('Error downloading SVG ' + filename + ': ' + error.message);
+                console.error('Download error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

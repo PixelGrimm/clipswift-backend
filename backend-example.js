@@ -14,6 +14,14 @@ app.use(express.static('public'));
 // Create promotion codes in Stripe (run once)
 async function createPromotionCodes() {
     try {
+        console.log('Starting promotion codes setup...');
+        
+        // Check if Stripe key is valid
+        if (!process.env.STRIPE_SECRET_KEY) {
+            console.error('STRIPE_SECRET_KEY not found in environment variables');
+            return;
+        }
+
         // Create coupons first
         const coupons = {
             'WELCOME10': { percent_off: 10, duration: 'once' },
@@ -43,20 +51,24 @@ async function createPromotionCodes() {
 
                 console.log(`Created promotion code: ${code}`);
             } catch (error) {
-                if (error.code === 'resource_missing') {
-                    console.log(`Coupon ${code} already exists`);
+                if (error.code === 'resource_missing' || error.code === 'resource_already_exists') {
+                    console.log(`Coupon ${code} already exists or is being created`);
                 } else {
                     console.error(`Error creating ${code}:`, error.message);
                 }
             }
         }
+        console.log('Promotion codes setup completed');
     } catch (error) {
         console.error('Error creating promotion codes:', error);
+        // Don't crash the server if promotion codes fail
     }
 }
 
-// Initialize promotion codes
-createPromotionCodes();
+// Initialize promotion codes with delay to avoid startup issues
+setTimeout(() => {
+    createPromotionCodes();
+}, 5000); // Wait 5 seconds after server starts
 
 // Endpoint to manually create/check promotion codes
 app.get('/setup-promotion-codes', async (req, res) => {
@@ -220,5 +232,25 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`🚀 ClipSwift Backend server running on port ${PORT}`);
+    console.log(`📊 Health check: http://localhost:${PORT}/health`);
+    console.log(`🔗 Main endpoint: http://localhost:${PORT}/`);
+    
+    // Check environment variables
+    if (!process.env.STRIPE_SECRET_KEY) {
+        console.warn('⚠️  STRIPE_SECRET_KEY not found - Stripe features will not work');
+    } else {
+        console.log('✅ Stripe configuration loaded');
+    }
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+    console.error('❌ Uncaught Exception:', error);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+    process.exit(1);
 });

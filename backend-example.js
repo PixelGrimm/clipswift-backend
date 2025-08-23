@@ -27,8 +27,8 @@ async function createPromotionCodes() {
             'WELCOME10': { percent_off: 10, duration: 'once' },
             'LAUNCH20': { percent_off: 20, duration: 'once' },
             'SAVE50': { percent_off: 50, duration: 'once' },
-            'FREETRIAL': { percent_off: 100, duration: 'repeating', duration_in_months: 1 }, // 100% off but will require card
-            'FREE100': { percent_off: 100, duration: 'once' } // 100% off but will require card
+            'FREETRIAL': { percent_off: 90, duration: 'repeating', duration_in_months: 1 }, // 90% off to show in history
+            'FREE100': { percent_off: 90, duration: 'once' } // 90% off to show in history
         };
 
         for (const [code, config] of Object.entries(coupons)) {

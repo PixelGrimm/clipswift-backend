@@ -27,8 +27,8 @@ async function createPromotionCodes() {
             'WELCOME10': { percent_off: 10, duration: 'once' },
             'LAUNCH20': { percent_off: 20, duration: 'once' },
             'SAVE50': { percent_off: 50, duration: 'once' },
-            'FREETRIAL': { percent_off: 100, duration: 'repeating', duration_in_months: 1 },
-            'FREE100': { percent_off: 100, duration: 'once' }
+            'FREETRIAL': { percent_off: 99, duration: 'repeating', duration_in_months: 1 }, // 99% off to show in history
+            'FREE100': { percent_off: 99, duration: 'once' } // 99% off to show in history
         };
 
         for (const [code, config] of Object.entries(coupons)) {
@@ -99,6 +99,46 @@ app.get('/setup-promotion-codes', async (req, res) => {
     } catch (error) {
         console.error('Error setting up promotion codes:', error);
         res.status(500).json({ error: 'Failed to setup promotion codes', details: error.message });
+    }
+});
+
+// Force recreate promotion codes (useful for updating existing codes)
+app.get('/recreate-promotion-codes', async (req, res) => {
+    try {
+        console.log('🔄 Force recreating promotion codes...');
+        
+        // Delete existing promotion codes first
+        const existingCodes = ['WELCOME10', 'LAUNCH20', 'SAVE50', 'FREETRIAL', 'FREE100'];
+        
+        for (const code of existingCodes) {
+            try {
+                // Delete promotion code
+                const promotionCodes = await stripe.promotionCodes.list({ code: code });
+                for (const promoCode of promotionCodes.data) {
+                    await stripe.promotionCodes.update(promoCode.id, { active: false });
+                    console.log(`Deactivated promotion code: ${code}`);
+                }
+                
+                // Delete coupon
+                await stripe.coupons.del(code);
+                console.log(`Deleted coupon: ${code}`);
+            } catch (error) {
+                console.log(`Could not delete ${code}:`, error.message);
+            }
+        }
+        
+        // Wait a moment then recreate
+        setTimeout(async () => {
+            await createPromotionCodes();
+        }, 2000);
+        
+        res.json({ 
+            message: 'Promotion codes recreation initiated',
+            note: 'Codes will be recreated with 99% discount to show in payment history'
+        });
+    } catch (error) {
+        console.error('Error recreating promotion codes:', error);
+        res.status(500).json({ error: 'Failed to recreate promotion codes', details: error.message });
     }
 });
 

@@ -27,8 +27,8 @@ async function createPromotionCodes() {
             'WELCOME10': { percent_off: 10, duration: 'once' },
             'LAUNCH20': { percent_off: 20, duration: 'once' },
             'SAVE50': { percent_off: 50, duration: 'once' },
-            'FREETRIAL': { percent_off: 90, duration: 'repeating', duration_in_months: 1 }, // 90% off to show in history
-            'FREE100': { percent_off: 90, duration: 'once' } // 90% off to show in history
+            'FREETRIAL': { percent_off: 100, duration: 'repeating', duration_in_months: 1 }, // 100% off but will require card
+            'FREE100': { percent_off: 100, duration: 'once' } // 100% off but will require card
         };
 
         for (const [code, config] of Object.entries(coupons)) {
@@ -164,9 +164,15 @@ app.post('/create-checkout-with-promo', async (req, res) => {
             metadata: {
                 source: 'clipswift_extension'
             },
-            // Force enable promotion codes
+            // Force payment method collection even for 100% discounts
             payment_method_collection: 'always',
-            automatic_tax: { enabled: false }
+            automatic_tax: { enabled: false },
+            // Force subscription creation even for free sessions
+            subscription_data: {
+                metadata: {
+                    source: 'clipswift_extension'
+                }
+            }
         });
 
         res.json({ sessionId: session.id, url: session.url });
@@ -240,9 +246,13 @@ app.get('/test-discount/:code', async (req, res) => {
             success_url: 'https://clipswift-backend-production.up.railway.app/success',
             cancel_url: 'https://clipswift-backend-production.up.railway.app/cancel',
             allow_promotion_codes: true,
-            discounts: [{
-                promotion_code: code
-            }]
+            payment_method_collection: 'always',
+            automatic_tax: { enabled: false },
+            subscription_data: {
+                metadata: {
+                    source: 'clipswift_extension'
+                }
+            }
         });
         
         res.json({

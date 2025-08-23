@@ -27,8 +27,8 @@ async function createPromotionCodes() {
             'WELCOME10': { percent_off: 10, duration: 'once' },
             'LAUNCH20': { percent_off: 20, duration: 'once' },
             'SAVE50': { percent_off: 50, duration: 'once' },
-            'FREETRIAL': { percent_off: 99, duration: 'repeating', duration_in_months: 1 }, // 99% off to show in history
-            'FREE100': { percent_off: 99, duration: 'once' } // 99% off to show in history
+            'FREETRIAL': { percent_off: 90, duration: 'repeating', duration_in_months: 1 }, // 90% off to show in history
+            'FREE100': { percent_off: 90, duration: 'once' } // 90% off to show in history
         };
 
         for (const [code, config] of Object.entries(coupons)) {
@@ -218,6 +218,43 @@ app.get('/session/:sessionId', async (req, res) => {
     } catch (error) {
         console.error('❌ Error retrieving session:', error);
         res.status(500).json({ error: 'Failed to retrieve session', details: error.message });
+    }
+});
+
+// Test discount codes endpoint
+app.get('/test-discount/:code', async (req, res) => {
+    try {
+        const { code } = req.params;
+        console.log('🧪 Testing discount code:', code);
+        
+        // Create a test session with the specific discount code
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price: 'price_1RzIKIPu9zXPs9BWghmq5pRE',
+                    quantity: 1,
+                },
+            ],
+            mode: 'subscription',
+            success_url: 'https://clipswift-backend-production.up.railway.app/success',
+            cancel_url: 'https://clipswift-backend-production.up.railway.app/cancel',
+            allow_promotion_codes: true,
+            discounts: [{
+                promotion_code: code
+            }]
+        });
+        
+        res.json({
+            message: `Test session created with discount code: ${code}`,
+            sessionId: session.id,
+            sessionUrl: session.url,
+            amountTotal: session.amount_total,
+            totalDetails: session.total_details
+        });
+    } catch (error) {
+        console.error('❌ Error testing discount code:', error);
+        res.status(500).json({ error: 'Failed to test discount code', details: error.message });
     }
 });
 

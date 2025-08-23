@@ -155,6 +155,32 @@ app.get('/', (req, res) => {
     res.json({ message: 'ClipSwift Backend is running!', timestamp: new Date().toISOString() });
 });
 
+// Debug endpoint to check session details
+app.get('/session/:sessionId', async (req, res) => {
+    try {
+        const { sessionId } = req.params;
+        console.log('🔍 Debug: Checking session:', sessionId);
+        
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        
+        res.json({
+            session: {
+                id: session.id,
+                status: session.status,
+                payment_status: session.payment_status,
+                amount_total: session.amount_total,
+                total_details: session.total_details,
+                customer_email: session.customer_email,
+                subscription: session.subscription,
+                metadata: session.metadata
+            }
+        });
+    } catch (error) {
+        console.error('❌ Error retrieving session:', error);
+        res.status(500).json({ error: 'Failed to retrieve session', details: error.message });
+    }
+});
+
 // Create Stripe checkout session
 app.post('/create-checkout-session', async (req, res) => {
     try {
@@ -192,17 +218,35 @@ app.post('/create-checkout-session', async (req, res) => {
 app.post('/verify-payment', async (req, res) => {
     try {
         const { sessionId } = req.body;
+        console.log('🔍 Verifying payment for session:', sessionId);
 
         const session = await stripe.checkout.sessions.retrieve(sessionId);
+        console.log('📊 Session details:', {
+            id: session.id,
+            status: session.status,
+            payment_status: session.payment_status,
+            amount_total: session.amount_total,
+            total_details: session.total_details,
+            customer_email: session.customer_email
+        });
         
-        if (session.payment_status === 'paid') {
+        // Check if session is completed (paid or free with discount)
+        if (session.status === 'complete') {
+            console.log('✅ Session completed successfully');
             res.json({ paymentStatus: 'completed' });
+        } else if (session.payment_status === 'paid') {
+            console.log('✅ Payment completed');
+            res.json({ paymentStatus: 'completed' });
+        } else if (session.status === 'expired') {
+            console.log('❌ Session expired');
+            res.json({ paymentStatus: 'expired' });
         } else {
+            console.log('⏳ Session still pending');
             res.json({ paymentStatus: 'pending' });
         }
     } catch (error) {
-        console.error('Error verifying payment:', error);
-        res.status(500).json({ error: 'Failed to verify payment' });
+        console.error('❌ Error verifying payment:', error);
+        res.status(500).json({ error: 'Failed to verify payment', details: error.message });
     }
 });
 
@@ -214,18 +258,47 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     try {
         event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
-        console.error('Webhook signature verification failed:', err.message);
+        console.error('❌ Webhook signature verification failed:', err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
+
+    console.log('📨 Webhook received:', event.type);
 
     // Handle the event
     switch (event.type) {
         case 'checkout.session.completed':
             const session = event.data.object;
-            console.log('Payment completed for session:', session.id);
+            console.log('✅ Checkout session completed:', {
+                id: session.id,
+                status: session.status,
+                payment_status: session.payment_status,
+                amount_total: session.amount_total,
+                customer_email: session.customer_email,
+                subscription: session.subscription
+            });
+            
+            // Log if it was a free session (100% discount)
+            if (session.amount_total === 0) {
+                console.log('🎉 Free session completed with 100% discount!');
+            }
             break;
+            
+        case 'checkout.session.expired':
+            const expiredSession = event.data.object;
+            console.log('⏰ Checkout session expired:', expiredSession.id);
+            break;
+            
+        case 'invoice.payment_succeeded':
+            const invoice = event.data.object;
+            console.log('💰 Invoice payment succeeded:', {
+                id: invoice.id,
+                amount_paid: invoice.amount_paid,
+                customer: invoice.customer
+            });
+            break;
+            
         default:
-            console.log(`Unhandled event type ${event.type}`);
+            console.log(`📋 Unhandled event type: ${event.type}`);
     }
 
     res.json({ received: true });

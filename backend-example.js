@@ -27,8 +27,8 @@ async function createPromotionCodes() {
             'WELCOME10': { percent_off: 10, duration: 'once' },
             'LAUNCH20': { percent_off: 20, duration: 'once' },
             'SAVE50': { percent_off: 50, duration: 'once' },
-            'FREETRIAL': { percent_off: 90, duration: 'repeating', duration_in_months: 1 }, // 90% off to show in history
-            'FREE100': { percent_off: 90, duration: 'once' } // 90% off to show in history
+            'FREETRIAL': { percent_off: 99, duration: 'repeating', duration_in_months: 1 }, // 99% off for 1 month (£0.08), then full price
+            'FREE100': { percent_off: 99, duration: 'once' } // 99% off forever (£0.08 one-time)
         };
 
         for (const [code, config] of Object.entries(coupons)) {

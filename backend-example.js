@@ -6,6 +6,11 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware - MUST be defined before routes
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
+
 // Create promotion codes in Stripe (run once)
 async function createPromotionCodes() {
     try {
@@ -118,11 +123,6 @@ app.post('/create-checkout-with-promo', async (req, res) => {
         res.status(500).json({ error: 'Failed to create checkout session', details: error.message });
     }
 });
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.static('public'));
 
 // Serve static HTML files
 app.get('/success', (req, res) => {

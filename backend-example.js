@@ -27,8 +27,9 @@ async function createPromotionCodes() {
             'WELCOME10': { percent_off: 10, duration: 'once' },
             'LAUNCH20': { percent_off: 20, duration: 'once' },
             'SAVE50': { percent_off: 50, duration: 'once' },
-            'FREETRIAL': { percent_off: 90, duration: 'repeating', duration_in_months: 1 }, // 90% off for 1 month (£0.80), then full price
-            'FREE100': { percent_off: 100, duration: 'once' } // 100% off forever (one-time)
+            'FREETRIAL': { percent_off: 100, duration: 'repeating', duration_in_months: 1 }, // 100% off for 1 month, then full price
+            'FREE100': { percent_off: 100, duration: 'once' }, // 100% off forever (one-time)
+            'TEST90': { percent_off: 90, duration: 'once' } // 90% off for testing (£0.80)
         };
 
         for (const [code, config] of Object.entries(coupons)) {
@@ -92,7 +93,7 @@ app.get('/setup-promotion-codes', async (req, res) => {
         
         res.json({ 
             message: 'Promotion codes setup completed',
-            codes: ['WELCOME10', 'LAUNCH20', 'SAVE50', 'FREETRIAL', 'FREE100'],
+            codes: ['WELCOME10', 'LAUNCH20', 'SAVE50', 'FREETRIAL', 'FREE100', 'TEST90'],
             testSessionUrl: testSession.url,
             promotionCodesEnabled: true
         });
@@ -108,7 +109,7 @@ app.get('/recreate-promotion-codes', async (req, res) => {
         console.log('🔄 Force recreating promotion codes...');
         
         // Delete existing promotion codes first
-        const existingCodes = ['WELCOME10', 'LAUNCH20', 'SAVE50', 'FREETRIAL', 'FREE100'];
+        const existingCodes = ['WELCOME10', 'LAUNCH20', 'SAVE50', 'FREETRIAL', 'FREE100', 'TEST90'];
         
         for (const code of existingCodes) {
             try {

@@ -750,43 +750,53 @@
         }
 
         /* Confirmation Modal Styles */
-        .confirm-modal {
-            background-color: #f8f9fa; /* Light theme background */
+        .modal-content.confirm-modal {
+            background-color: #f8f9fa !important; /* Light theme background */
             border: 1px solid #dee2e6;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            max-width: 300px !important;
+            width: 90% !important;
+            min-height: auto !important;
+            height: auto !important;
         }
 
-        body.dark-theme .confirm-modal {
-            background-color: #2d2d2d;
+        body.dark-theme .modal-content.confirm-modal {
+            background-color: #2d2d2d !important;
             border-color: #404040;
             box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+            max-width: 300px !important;
+            width: 90% !important;
         }
 
-        .confirm-modal .modal-header {
+        .modal-content.confirm-modal .modal-header {
             border-bottom: 1px solid #e9ecef;
+            padding: 8px 15px 3px 15px !important;
         }
 
-        body.dark-theme .confirm-modal .modal-header {
+        body.dark-theme .modal-content.confirm-modal .modal-header {
             border-bottom: 1px solid #404040;
         }
 
-        .confirm-modal .modal-title {
+        .modal-content.confirm-modal .modal-title {
             color: #333;
+            font-size: 14px !important;
+            margin-bottom: 0 !important;
         }
 
-        body.dark-theme .confirm-modal .modal-title {
+        body.dark-theme .modal-content.confirm-modal .modal-title {
             color: #ffffff;
         }
 
-        .confirm-modal .modal-body {
-            padding: 20px;
+        .modal-content.confirm-modal .modal-body {
+            padding: 8px 15px !important;
         }
 
-        .confirm-modal .modal-footer {
-            padding: 0 20px 20px 20px;
+        .modal-content.confirm-modal .modal-footer {
+            padding: 0 15px 0 15px !important;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: flex-end;
+            margin-bottom: 0 !important;
         }
 
         .confirm-modal .btn-secondary {
@@ -955,6 +965,29 @@
             font-size: 12px;
             color: #666;
         }
+        
+        .discount-section {
+            margin-top: 20px;
+        }
+        
+        .discount-note {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .discount-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 123, 255, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .discount-info h3 {
+            margin-bottom: 10px;
+            color: #007bff;
+        }
 
         .downgrade-warning {
             margin: 15px 0;
@@ -1042,6 +1075,7 @@
             <div class="tab" data-category="AI Prompts">AI Prompts</div>
             <div class="tab" data-category="Templates">Templates</div>
             <div class="tab" data-category="Messages">Messages</div>
+            <div class="tab" data-category="Rizz">Rizz</div>
             <div class="tab" data-category="Code">Code</div>
         </div>
         <div class="upgrade-row">
@@ -1068,6 +1102,9 @@
                         Click the <strong>+</strong> button to create a new snippet<br>
                         or select an existing snippet to edit
                     </div>
+                    <div style="font-size: 12px; opacity: 0.6; margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                        💡 <strong>Tip:</strong> If your snippets don't work right away, refresh the website
+                    </div>
                 </div>
             </div>
             <input type="text" class="title-input" id="snippetTitle" placeholder="Snippet command...">
@@ -1075,6 +1112,7 @@
                 <option value="AI Prompts">AI Prompts</option>
                 <option value="Templates">Templates</option>
                 <option value="Messages">Messages</option>
+                <option value="Rizz">Rizz</option>
                 <option value="Code">Code</option>
                 <option value="Custom">Custom</option>
             </select>
@@ -1107,8 +1145,21 @@
                         <option value="AI Prompts">AI Prompts</option>
                         <option value="Templates">Templates</option>
                         <option value="Messages">Messages</option>
+                        <option value="Rizz">Rizz</option>
                         <option value="Code">Code</option>
                         <option value="Custom">Custom</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tone</label>
+                    <select class="form-input" id="aiTone">
+                        <option value="Professional">Professional</option>
+                        <option value="Casual">Casual</option>
+                        <option value="Roasting/Sarcastic">Roasting/Sarcastic</option>
+                        <option value="Supportive">Supportive</option>
+                        <option value="Humorous">Humorous</option>
+                        <option value="Rizz">Rizz (Flirty/Smooth)</option>
+                        <option value="Neutral">Neutral</option>
                     </select>
                 </div>
                 <div class="loading" id="aiLoading">
@@ -1285,6 +1336,8 @@
                     <input type="email" id="customerEmail" class="form-input" placeholder="Enter your billing email address" required>
                     <p class="email-note">We'll send you a receipt and account updates</p>
                 </div>
+
+
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="maybeLaterBtn">Maybe Later</button>

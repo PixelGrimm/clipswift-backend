@@ -274,16 +274,63 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 
 // Also listen for messages from popup
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    console.log('Content script: Received message:', request.action);
+    
     if (request.action === 'updateSnippets') {
         console.log('Content script: Received updateSnippets message');
-        loadSnippets().then(() => {
-            console.log('Content script: Snippets reloaded successfully');
-            sendResponse({success: true});
-        }).catch((error) => {
-            console.error('Content script: Error reloading snippets:', error);
-            sendResponse({success: false, error: error.message});
+        
+        // Update snippets directly if provided
+        if (request.snippets) {
+            snippets = request.snippets;
+            userTier = request.userTier || userTier;
+            console.log('Content script: Updated snippets directly, count:', snippets.length);
+            
+            // Log the new snippets for debugging
+            snippets.forEach(snippet => {
+                console.log('Content script: Snippet loaded:', snippet.title, snippet.content.substring(0, 50) + '...');
+            });
+        } else {
+            // Fallback to loading from storage
+            loadSnippets().then(() => {
+                console.log('Content script: Snippets reloaded from storage, count:', snippets.length);
+            }).catch((error) => {
+                console.error('Content script: Error reloading snippets from storage:', error);
+            });
+        }
+        
+        // Force a re-check of any active text inputs
+        const activeElement = document.activeElement;
+        if (activeElement && isTextInput(activeElement)) {
+            const text = getElementText(activeElement);
+            if (text) {
+                console.log('Content script: Re-checking active element with text:', text);
+                checkAutoCompletion(activeElement, text);
+            }
+        }
+        
+        // Also check all text inputs on the page
+        const allTextInputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="search"], textarea, [contenteditable="true"]');
+        allTextInputs.forEach(input => {
+            if (isTextInput(input)) {
+                const text = getElementText(input);
+                if (text) {
+                    console.log('Content script: Re-checking input:', input.tagName, 'with text:', text);
+                    checkAutoCompletion(input, text);
+                }
+            }
         });
+        
+        sendResponse({success: true, snippetsCount: snippets.length});
         return true; // Keep the message channel open for async response
+    }
+    
+    if (request.action === 'updateTier') {
+        console.log('Content script: Received updateTier message', request);
+        userTier = request.userTier;
+        snippets = request.snippets || [];
+        console.log('Content script: Updated userTier to', userTier, 'and snippets count:', snippets.length);
+        sendResponse({success: true});
+        return true;
     }
 });
 }

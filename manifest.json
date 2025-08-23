@@ -6,7 +6,8 @@
   "permissions": [
     "storage",
     "activeTab",
-    "windows"
+    "windows",
+    "tabs"
   ],
   "content_scripts": [
     {

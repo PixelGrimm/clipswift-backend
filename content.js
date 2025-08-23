@@ -1,13 +1,16 @@
 // Content script for ClipSwift - runs on all websites
 let snippets = [];
+let userTier = 'free';
 
-// Load snippets from storage
+// Load snippets and user tier from storage
 async function loadSnippets() {
     try {
-        const result = await chrome.storage.sync.get(['snippets']);
+        const result = await chrome.storage.sync.get(['snippets', 'userTier']);
         snippets = result.snippets || [];
+        userTier = result.userTier || 'free';
     } catch (error) {
         snippets = [];
+        userTier = 'free';
     }
 }
 
@@ -17,9 +20,30 @@ function checkAutoCompletion(element, text) {
     const words = text.split(/\s+/);
     const currentWord = words[words.length - 1];
     
-    // Check snippet titles as triggers
+    // First check sample snippets (always available)
+    for (const snippet of snippets.filter(s => s.isSample)) {
+        if (snippet.title && currentWord === snippet.title) {
+            replaceText(element, words, snippet.content);
+            return;
+        }
+    }
+    
+    // Then check user snippets (with tier restrictions)
     for (const snippet of snippets) {
         if (snippet.title && currentWord === snippet.title) {
+            // For free users, check if snippet is disabled
+            if (userTier === 'free') {
+                const userSnippets = snippets.filter(s => !s.isSample);
+                const lastTwoSnippets = userSnippets.slice(-2);
+                const lastTwoSnippetIds = lastTwoSnippets.map(s => s.id);
+                const isLocked = !snippet.isSample && !lastTwoSnippetIds.includes(snippet.id);
+                
+                if (isLocked) {
+                    // Don't auto-complete disabled snippets for free users
+                    continue;
+                }
+            }
+            
             replaceText(element, words, snippet.content);
             return;
         }
@@ -240,12 +264,28 @@ function init() {
     setupEventListeners();
     setupMutationObserver();
     
-    // Listen for storage changes to reload snippets
-    chrome.storage.onChanged.addListener(function(changes, namespace) {
-        if (namespace === 'sync' && changes.snippets) {
-            loadSnippets();
-        }
-    });
+    // Listen for storage changes to reload snippets and user tier
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+    if (namespace === 'sync' && (changes.snippets || changes.userTier)) {
+        console.log('Content script: Storage changed, reloading snippets and user tier');
+        loadSnippets();
+    }
+});
+
+// Also listen for messages from popup
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.action === 'updateSnippets') {
+        console.log('Content script: Received updateSnippets message');
+        loadSnippets().then(() => {
+            console.log('Content script: Snippets reloaded successfully');
+            sendResponse({success: true});
+        }).catch((error) => {
+            console.error('Content script: Error reloading snippets:', error);
+            sendResponse({success: false, error: error.message});
+        });
+        return true; // Keep the message channel open for async response
+    }
+});
 }
 
 // Run initialization

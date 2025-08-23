@@ -27,7 +27,7 @@ async function createPromotionCodes() {
             'WELCOME10': { percent_off: 10, duration: 'once' },
             'LAUNCH20': { percent_off: 20, duration: 'once' },
             'SAVE50': { percent_off: 50, duration: 'once' },
-            'FREETRIAL': { percent_off: 99, duration: 'repeating', duration_in_months: 1 }, // 99% off for 1 month (£0.08), then full price
+            'FREETRIAL': { percent_off: 90, duration: 'repeating', duration_in_months: 1 }, // 90% off for 1 month (£0.80), then full price
             'FREE100': { percent_off: 100, duration: 'once' } // 100% off forever (one-time)
         };
 

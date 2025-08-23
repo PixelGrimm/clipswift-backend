@@ -5,7 +5,7 @@ let currentCategory = 'all';
 let searchQuery = '';
 let currentTheme = 'light';
 // API key for OpenAI - this is your OpenAI API key
-let openaiApiKey = 'YOUR_OPENAI_API_KEY_HERE';
+let openaiApiKey = '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';
 
 // User tier management
 let userTier = 'free'; // 'free' or 'premium'
@@ -174,7 +174,7 @@ async function saveSnippets() {
                         });
                         notifiedTabs++;
                         console.log('Successfully notified tab:', tab.url);
-                    } catch (error) {
+    } catch (error) {
                         console.log('Could not send message to tab:', tab.url, error);
                     }
                 }
@@ -313,8 +313,8 @@ function loadSnippet(snippet) {
         }
         
         // Show message that sample snippets can't be edited
-        const saveBtn = document.getElementById('saveBtn');
-        if (saveBtn) {
+    const saveBtn = document.getElementById('saveBtn');
+    if (saveBtn) {
             saveBtn.textContent = 'Sample - Read Only';
             saveBtn.style.background = '#6c757d';
             saveBtn.disabled = true;
@@ -872,7 +872,7 @@ async function handlePayment() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                priceId: 'price_1RzIKIPu9zXPs9BWghmq5pRE', // Your Stripe Price ID
+                priceId: 'price_1RzIKIPu9zXPs9BWghmq5pRE', // TODO: Update to live price ID
                 successUrl: 'https://clipswift-backend-production.up.railway.app/success',
                 cancelUrl: 'https://clipswift-backend-production.up.railway.app/cancel',
                 customerEmail: customerEmail,
@@ -1232,7 +1232,7 @@ async function confirmDowngrade() {
                         userTier: 'free',
                         snippets: snippets 
                     });
-                } catch (error) {
+    } catch (error) {
                     // Tab might not have content script, ignore
                 }
             }

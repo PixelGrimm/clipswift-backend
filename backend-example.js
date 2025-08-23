@@ -80,7 +80,7 @@ app.get('/setup-promotion-codes', async (req, res) => {
             payment_method_types: ['card'],
             line_items: [
                 {
-                    price: 'price_1RzIKIPu9zXPs9BWghmq5pRE',
+                    price: 'price_1RzIKIPu9zXPs9BWghmq5pRE', // TODO: Update to live price ID
                     quantity: 1,
                 },
             ],
@@ -238,7 +238,7 @@ app.get('/test-discount/:code', async (req, res) => {
             payment_method_types: ['card'],
             line_items: [
                 {
-                    price: 'price_1RzIKIPu9zXPs9BWghmq5pRE',
+                    price: 'price_1RzIKIPu9zXPs9BWghmq5pRE', // TODO: Update to live price ID
                     quantity: 1,
                 },
             ],

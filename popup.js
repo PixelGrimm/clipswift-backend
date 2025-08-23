@@ -872,7 +872,7 @@ async function handlePayment() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                priceId: 'price_1RzIKIPu9zXPs9BWghmq5pRE', // TODO: Update to live price ID
+                priceId: 'price_1RzQRWLRp5AeS8F20zehtEpk', // Live price ID
                 successUrl: 'https://clipswift-backend-production.up.railway.app/success',
                 cancelUrl: 'https://clipswift-backend-production.up.railway.app/cancel',
                 customerEmail: customerEmail,

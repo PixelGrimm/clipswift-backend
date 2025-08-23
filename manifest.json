@@ -36,11 +36,5 @@
   },
   "background": {
     "service_worker": "background.js"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["icons/*", "success.html", "cancel.html"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  }
 }

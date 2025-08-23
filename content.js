@@ -1,16 +1,13 @@
 // Content script for ClipSwift - runs on all websites
 let snippets = [];
-let userTier = 'free'; // Default to free tier
 
-// Load snippets and user tier from storage
+// Load snippets from storage
 async function loadSnippets() {
     try {
-        const result = await chrome.storage.sync.get(['snippets', 'userTier']);
+        const result = await chrome.storage.sync.get(['snippets']);
         snippets = result.snippets || [];
-        userTier = result.userTier || 'free';
     } catch (error) {
         snippets = [];
-        userTier = 'free';
     }
 }
 
@@ -20,13 +17,8 @@ function checkAutoCompletion(element, text) {
     const words = text.split(/\s+/);
     const currentWord = words[words.length - 1];
     
-    // Check snippet titles as triggers (exclude disabled snippets for free users)
+    // Check snippet titles as triggers
     for (const snippet of snippets) {
-        // Skip disabled snippets for free users
-        if (userTier === 'free' && snippet.disabled) {
-            continue;
-        }
-        
         if (snippet.title && currentWord === snippet.title) {
             replaceText(element, words, snippet.content);
             return;
@@ -248,9 +240,9 @@ function init() {
     setupEventListeners();
     setupMutationObserver();
     
-    // Listen for storage changes to reload snippets and user tier
+    // Listen for storage changes to reload snippets
     chrome.storage.onChanged.addListener(function(changes, namespace) {
-        if (namespace === 'sync' && (changes.snippets || changes.userTier)) {
+        if (namespace === 'sync' && changes.snippets) {
             loadSnippets();
         }
     });

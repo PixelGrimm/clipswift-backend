@@ -186,6 +186,13 @@
             overflow-x: auto;
         }
 
+        .upgrade-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            gap: 10px;
+        }
+
         .tab {
             padding: 8px 16px;
             background: #f8f9fa;
@@ -224,13 +231,6 @@
         }
 
         .content {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            min-height: 0;
-        }
-
-        .content-main {
             display: flex;
             flex: 1;
             min-height: 0;
@@ -278,35 +278,6 @@
             border-left: 3px solid #4dabf7;
         }
 
-        /* Disabled snippet styling */
-        .snippet-item.disabled {
-            opacity: 0.5;
-            background: #f8f9fa;
-            cursor: not-allowed;
-        }
-
-        body.dark-theme .snippet-item.disabled {
-            background: #404040;
-        }
-
-        .snippet-item.disabled:hover {
-            background: #f8f9fa;
-        }
-
-        body.dark-theme .snippet-item.disabled:hover {
-            background: #404040;
-        }
-
-        .snippet-item.disabled strong,
-        .snippet-item.disabled small {
-            color: #6c757d;
-        }
-
-        body.dark-theme .snippet-item.disabled strong,
-        body.dark-theme .snippet-item.disabled small {
-            color: #aaa;
-        }
-
         .snippet-item strong {
             display: block;
             font-size: 14px;
@@ -320,21 +291,6 @@
         }
 
         body.dark-theme .snippet-item small {
-            color: #aaa;
-        }
-
-        /* Disabled input styles for sample snippets */
-        .title-input:disabled,
-        .content-textarea:disabled {
-            background-color: #f8f9fa;
-            color: #6c757d;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        body.dark-theme .title-input:disabled,
-        body.dark-theme .content-textarea:disabled {
-            background-color: #404040;
             color: #aaa;
         }
 
@@ -470,17 +426,8 @@
 
         .button-row {
             display: flex;
-            justify-content: flex-end;
-            align-items: center;
             gap: 10px;
-            padding: 15px 20px;
-            background: white;
-            border-top: 1px solid #e9ecef;
-        }
-
-        body.dark-theme .button-row {
-            background: #2d2d2d;
-            border-top: 1px solid #404040;
+            justify-content: flex-end;
         }
 
         .btn {
@@ -909,381 +856,6 @@
             background: #404040;
             color: #ff6b9d;
         }
-
-
-
-        /* Snippet count display */
-        .snippet-count {
-            text-align: center;
-            background: #198754;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            opacity: 1 !important;
-        }
-
-        body.dark-theme .snippet-count {
-            background: #198754;
-            color: white;
-            opacity: 1 !important;
-        }
-
-        /* Upgrade button */
-        .upgrade-btn {
-            background: #ffc107;
-            color: #333;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            transition: background 0.2s;
-            opacity: 1 !important;
-        }
-
-        .upgrade-btn:hover {
-            background: #ffca28;
-        }
-
-        body.dark-theme .upgrade-btn {
-            background: #ff9800;
-            color: #ffffff;
-            opacity: 1 !important;
-        }
-
-        body.dark-theme .upgrade-btn:hover {
-            background: #ffb74d;
-        }
-
-        /* Downgrade button */
-        .downgrade-btn {
-            background: #6c757d;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            transition: background 0.2s;
-            opacity: 1 !important;
-        }
-
-        .downgrade-btn:hover {
-            background: #5a6268;
-        }
-
-        body.dark-theme .downgrade-btn {
-            background: #6c757d;
-            color: white;
-            opacity: 1 !important;
-        }
-
-        body.dark-theme .downgrade-btn:hover {
-            background: #5a6268;
-        }
-
-        /* Upgrade Modal Styles */
-        .upgrade-modal {
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .upgrade-modal .modal-header {
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .upgrade-modal .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-            transition: color 0.2s;
-        }
-
-        .upgrade-modal .close-btn:hover {
-            color: #333;
-        }
-
-        body.dark-theme .upgrade-modal .close-btn {
-            color: #aaa;
-        }
-
-        body.dark-theme .upgrade-modal .close-btn:hover {
-            color: #ffffff;
-        }
-
-        .upgrade-section {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .upgrade-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .upgrade-section h3 {
-            margin: 0 0 10px 0;
-            color: #007bff;
-            font-size: 16px;
-        }
-
-        .upgrade-section p {
-            margin: 8px 0;
-            line-height: 1.5;
-        }
-
-        .upgrade-section ul {
-            margin: 8px 0;
-            padding-left: 20px;
-        }
-
-        .upgrade-section li {
-            margin: 5px 0;
-            line-height: 1.4;
-        }
-
-        .upgrade-section code {
-            background: #f8f9fa;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: monospace;
-            color: #e83e8c;
-        }
-
-        body.dark-theme .upgrade-section code {
-            background: #404040;
-            color: #ff6b9d;
-        }
-
-        .pricing-section {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .pricing-section:last-child {
-            border-top: none;
-            margin-top: 0;
-        }
-
-        .pricing-section h3 {
-            margin: 0 0 10px 0;
-            color: #007bff;
-            font-size: 16px;
-        }
-
-        .price-display {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-        }
-
-        .period {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .price-note {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        body.dark-theme .pricing-section h3 {
-            color: #4dabf7;
-        }
-
-        body.dark-theme .price-display {
-            color: #4dabf7;
-        }
-
-        body.dark-theme .period {
-            color: #aaa;
-        }
-
-        body.dark-theme .price-note {
-            color: #aaa;
-        }
-
-        /* Email section styles */
-        .email-section {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        body.dark-theme .email-section {
-            border-top: 1px solid #404040;
-        }
-
-        .email-section h3 {
-            margin: 0 0 10px 0;
-            color: #007bff;
-            font-size: 16px;
-        }
-
-        body.dark-theme .email-section h3 {
-            color: #4dabf7;
-        }
-
-        .email-section .form-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        body.dark-theme .email-section .form-input {
-            background: #404040;
-            border-color: #555;
-            color: white;
-        }
-
-        .email-note {
-            font-size: 12px;
-            color: #666;
-            margin: 0;
-        }
-
-        body.dark-theme .email-note {
-            color: #aaa;
-        }
-
-        /* Downgrade modal styles */
-        .downgrade-warning {
-            margin-top: 15px;
-            padding: 15px;
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-        }
-
-        body.dark-theme .downgrade-warning {
-            background: #2d2d2d;
-            border: 1px solid #404040;
-        }
-
-        .downgrade-warning h3 {
-            margin: 0 0 10px 0;
-            color: #856404;
-            font-size: 16px;
-        }
-
-        body.dark-theme .downgrade-warning h3 {
-            color: #ffc107;
-        }
-
-        .downgrade-warning ul {
-            margin: 8px 0;
-            padding-left: 20px;
-        }
-
-        .downgrade-warning li {
-            margin: 5px 0;
-            line-height: 1.4;
-        }
-
-        .downgrade-info {
-            margin-top: 15px;
-            padding: 15px;
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            border-radius: 8px;
-        }
-
-        body.dark-theme .downgrade-info {
-            background: #2d2d2d;
-            border: 1px solid #404040;
-        }
-
-        .downgrade-info h3 {
-            margin: 0 0 10px 0;
-            color: #155724;
-            font-size: 16px;
-        }
-
-        body.dark-theme .downgrade-info h3 {
-            color: #28a745;
-        }
-
-        .downgrade-info ul {
-            margin: 8px 0;
-            padding-left: 20px;
-        }
-
-        .downgrade-info li {
-            margin: 5px 0;
-            line-height: 1.4;
-        }
-
-        /* Upgrade success modal styles */
-        .upgrade-success-info {
-            margin-top: 15px;
-            padding: 15px;
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            border-radius: 8px;
-        }
-
-        body.dark-theme .upgrade-success-info {
-            background: #2d2d2d;
-            border: 1px solid #404040;
-        }
-
-        .upgrade-success-info h3 {
-            margin: 0 0 10px 0;
-            color: #155724;
-            font-size: 16px;
-        }
-
-        body.dark-theme .upgrade-success-info h3 {
-            color: #28a745;
-        }
-
-        .upgrade-success-info ul {
-            margin: 8px 0;
-            padding-left: 20px;
-        }
-
-        .upgrade-success-info li {
-            margin: 5px 0;
-            line-height: 1.4;
-        }
-
-        /* Upgrade error modal styles */
-        .upgrade-error-info {
-            margin-top: 15px;
-            padding: 15px;
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 8px;
-        }
-
-        body.dark-theme .upgrade-error-info {
-            background: #2d2d2d;
-            border: 1px solid #404040;
-        }
-
-        .upgrade-error-info h3 {
-            margin: 0 0 10px 0;
-            color: #721c24;
-            font-size: 16px;
-        }
-
-        body.dark-theme .upgrade-error-info h3 {
-            color: #dc3545;
-        }
     </style>
 </head>
 <body>
@@ -1304,51 +876,46 @@
             <div class="tab" data-category="Messages">Messages</div>
             <div class="tab" data-category="Code">Code</div>
         </div>
+        <div class="upgrade-row">
+            <button id="upgradeButton" class="btn btn-primary">⭐ Upgrade to Premium</button>
+            <button id="downgradeButton" class="btn btn-secondary" style="display: none;">Downgrade to Free</button>
+        </div>
     </div>
 
     <div class="content">
-        <div class="content-main">
-            <div class="sidebar">
-                <div id="snippetsList">
-                    <div class="empty-state">
-                        <p>No snippets found</p>
-                        <p>Create your first snippet!</p>
-                    </div>
+        <div class="sidebar">
+            <div id="snippetsList">
+                <div class="empty-state">
+                    <p>No snippets found</p>
+                    <p>Create your first snippet!</p>
                 </div>
-            </div>
-            <div class="editor" id="editor">
-                <div class="editor-overlay" id="editorOverlay">
-                    <div class="editor-placeholder">
-                        <div style="font-size: 48px; margin-bottom: 15px;">📝</div>
-                        <div style="font-weight: 600; margin-bottom: 10px;">No snippet selected</div>
-                        <div style="font-size: 14px; opacity: 0.8;">
-                            Click the <strong>+</strong> button to create a new snippet<br>
-                            or select an existing snippet to edit
-                        </div>
-                    </div>
-                </div>
-                <input type="text" class="title-input" id="snippetTitle" placeholder="Snippet command...">
-                <select class="title-input" id="snippetCategory" style="margin-bottom: 15px;">
-                    <option value="AI Prompts">AI Prompts</option>
-                    <option value="Templates">Templates</option>
-                    <option value="Messages">Messages</option>
-                    <option value="Code">Code</option>
-                    <option value="Custom">Custom</option>
-                </select>
-                <textarea class="content-textarea" id="snippetContent" placeholder="Start typing your snippet content..."></textarea>
             </div>
         </div>
-                    <div class="button-row">
-                <div class="snippet-count" id="snippetCount">0/2 snippets</div>
-                <button class="upgrade-btn" id="upgradeButton">
-                    ⭐ Upgrade to Premium
-                </button>
-                <button class="downgrade-btn" id="downgradeButton" style="display: none;">
-                    ⬇️ Downgrade to Free
-                </button>
+        <div class="editor" id="editor">
+            <div class="editor-overlay" id="editorOverlay">
+                <div class="editor-placeholder">
+                    <div style="font-size: 48px; margin-bottom: 15px;">📝</div>
+                    <div style="font-weight: 600; margin-bottom: 10px;">No snippet selected</div>
+                    <div style="font-size: 14px; opacity: 0.8;">
+                        Click the <strong>+</strong> button to create a new snippet<br>
+                        or select an existing snippet to edit
+                    </div>
+                </div>
+            </div>
+            <input type="text" class="title-input" id="snippetTitle" placeholder="Snippet command...">
+            <select class="title-input" id="snippetCategory" style="margin-bottom: 15px;">
+                <option value="AI Prompts">AI Prompts</option>
+                <option value="Templates">Templates</option>
+                <option value="Messages">Messages</option>
+                <option value="Code">Code</option>
+                <option value="Custom">Custom</option>
+            </select>
+            <textarea class="content-textarea" id="snippetContent" placeholder="Start typing your snippet content..."></textarea>
+            <div class="button-row">
                 <button class="btn btn-danger" id="deleteBtn">Delete</button>
                 <button class="btn btn-primary" id="saveBtn">Save</button>
             </div>
+        </div>
     </div>
 
     <!-- AI Content Generator Modal -->
@@ -1529,38 +1096,31 @@
 
     <!-- Upgrade Modal -->
     <div id="upgradeModal" class="modal">
-        <div class="modal-content upgrade-modal">
+        <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">⭐ Upgrade to ClipSwift Premium</div>
-                <button class="close-btn" onclick="closeUpgradeModal()">&times;</button>
+                <button class="close-btn" id="closeUpgradeBtn">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="upgrade-section">
-                    <h3>🚀 What you get with Premium:</h3>
+                <p>Unlock unlimited snippets and AI features!</p>
+                <div class="upgrade-features">
+                    <h3>Premium Features:</h3>
                     <ul>
-                        <li>✅ <strong>Unlimited snippets</strong> (no more 2-snippet limit)</li>
-                        <li>🤖 <strong>AI Content Generator</strong> - Create professional content instantly</li>
-                        <li>⚡ <strong>Priority support</strong> - Get help when you need it</li>
-                        <li>🎨 <strong>Advanced features</strong> - Coming soon!</li>
+                        <li>✅ <strong>Unlimited snippets</strong></li>
+                        <li>✅ <strong>AI Content Generator</strong></li>
+                        <li>✅ <strong>Priority support</strong></li>
+                        <li>✅ <strong>Advanced features</strong></li>
                     </ul>
                 </div>
-                <div class="pricing-section">
-                    <h3>💳 Pricing</h3>
-                    <div class="price-display">
-                        <span class="price">$7.99</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <p class="price-note">Cancel anytime</p>
-                </div>
                 <div class="email-section">
-                    <h3>📧 Contact Information</h3>
-                    <input type="email" id="customerEmail" class="form-input" placeholder="Enter your email address" required>
+                    <h3>📧 Billing Email</h3>
+                    <input type="email" id="customerEmail" class="form-input" placeholder="Enter your billing email address" required>
                     <p class="email-note">We'll send you a receipt and account updates</p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeUpgradeModal()">Maybe Later</button>
-                <button class="btn btn-primary" onclick="handlePayment()">Upgrade Now</button>
+                <button class="btn btn-secondary" id="maybeLaterBtn">Maybe Later</button>
+                <button class="btn btn-primary" id="upgradeNowBtn">Upgrade Now</button>
             </div>
         </div>
     </div>
@@ -1570,7 +1130,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">⚠️ Confirm Downgrade</div>
-                <button class="close-btn" onclick="closeDowngradeConfirmModal()">&times;</button>
+                <button class="close-btn" id="closeDowngradeBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to downgrade to the free plan?</p>
@@ -1585,8 +1145,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeDowngradeConfirmModal()">Cancel</button>
-                <button class="btn btn-danger" onclick="confirmDowngrade()">Downgrade</button>
+                <button class="btn btn-secondary" id="cancelDowngradeBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmDowngradeBtn">Downgrade</button>
             </div>
         </div>
     </div>
@@ -1596,7 +1156,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">✅ Downgraded Successfully</div>
-                <button class="close-btn" onclick="closeDowngradeSuccessModal()">&times;</button>
+                <button class="close-btn" id="closeDowngradeSuccessBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <p>You have been downgraded to the free plan.</p>
@@ -1610,7 +1170,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" onclick="closeDowngradeSuccessModal()">Got it!</button>
+                <button class="btn btn-primary" id="gotItBtn">Got it!</button>
             </div>
         </div>
     </div>
@@ -1620,7 +1180,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">🎉 Welcome to ClipSwift Premium!</div>
-                <button class="close-btn" onclick="closeUpgradeSuccessModal()">&times;</button>
+                <button class="close-btn" id="closeUpgradeSuccessBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <p>Your upgrade was successful!</p>
@@ -1636,7 +1196,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" onclick="closeUpgradeSuccessModal()">Get Started!</button>
+                <button class="btn btn-primary" id="getStartedBtn">Get Started!</button>
             </div>
         </div>
     </div>
@@ -1646,7 +1206,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">❌ Upgrade Failed</div>
-                <button class="close-btn" onclick="closeUpgradeErrorModal()">&times;</button>
+                <button class="close-btn" id="closeUpgradeErrorBtn">&times;</button>
             </div>
             <div class="modal-body">
                 <p>Sorry, your upgrade could not be completed.</p>
@@ -1656,8 +1216,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeUpgradeErrorModal()">Close</button>
-                <button class="btn btn-primary" onclick="closeUpgradeErrorModal(); showUpgradeModal();">Try Again</button>
+                <button class="btn btn-secondary" id="closeErrorBtn">Close</button>
+                <button class="btn btn-primary" id="tryAgainBtn">Try Again</button>
             </div>
         </div>
     </div>

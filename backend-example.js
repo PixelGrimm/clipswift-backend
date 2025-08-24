@@ -490,7 +490,7 @@ app.post('/generate-ai-content', async (req, res) => {
         }
         
         // Build system prompt based on category and tone
-        let systemPrompt = 'You are a helpful assistant that generates text content.';
+        let systemPrompt = 'You are a helpful assistant that can respond to any prompt or comment in the same language and tone as the input.';
         
         if (category === 'Customer Support') {
             systemPrompt += ' Focus on professional, helpful customer service responses.';

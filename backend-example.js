@@ -2,6 +2,7 @@ const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors');
 const path = require('path');
+const fetch = require('node-fetch');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -475,6 +476,77 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     res.json({ received: true });
 });
 
+// OpenAI API endpoint
+app.post('/generate-ai-content', async (req, res) => {
+    try {
+        const { prompt, category, tone } = req.body;
+        
+        if (!process.env.OPENAI_API_KEY) {
+            return res.status(500).json({ error: 'OpenAI API key not configured' });
+        }
+        
+        if (!prompt) {
+            return res.status(400).json({ error: 'Prompt is required' });
+        }
+        
+        // Build system prompt based on category and tone
+        let systemPrompt = 'You are a helpful assistant that generates text content.';
+        
+        if (category === 'Customer Support') {
+            systemPrompt += ' Focus on professional, helpful customer service responses.';
+        } else if (category === 'Social Media') {
+            systemPrompt += ' Create engaging, social media-friendly content.';
+        } else if (category === 'Code') {
+            systemPrompt += ' Generate code snippets and technical explanations.';
+        } else if (category === 'Rizz') {
+            systemPrompt += ' Create flirty, smooth, and charming messages for dating apps and social media.';
+        }
+        
+        if (tone === 'Professional') {
+            systemPrompt += ' Use a formal, business-like tone.';
+        } else if (tone === 'Casual') {
+            systemPrompt += ' Use a friendly, conversational tone.';
+        } else if (tone === 'Friendly') {
+            systemPrompt += ' Use a warm, approachable tone.';
+        } else if (tone === 'Formal') {
+            systemPrompt += ' Use a very formal, official tone.';
+        } else if (tone === 'Rizz') {
+            systemPrompt += ' Use a flirty, smooth, and charming tone.';
+        }
+        
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: 'gpt-3.5-turbo',
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: prompt }
+                ],
+                max_tokens: 500,
+                temperature: 0.7
+            })
+        });
+        
+        if (!response.ok) {
+            const error = await response.text();
+            console.error('OpenAI API error:', error);
+            return res.status(500).json({ error: 'Failed to generate content' });
+        }
+        
+        const data = await response.json();
+        const generatedContent = data.choices[0].message.content;
+        
+        res.json({ content: generatedContent });
+    } catch (error) {
+        console.error('Error generating AI content:', error);
+        res.status(500).json({ error: 'Failed to generate content' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 ClipSwift Backend server running on port ${PORT}`);
     console.log(`📊 Health check: http://localhost:${PORT}/health`);
@@ -485,6 +557,12 @@ app.listen(PORT, () => {
         console.warn('⚠️  STRIPE_SECRET_KEY not found - Stripe features will not work');
     } else {
         console.log('✅ Stripe configuration loaded');
+    }
+    
+    if (!process.env.OPENAI_API_KEY) {
+        console.warn('⚠️  OPENAI_API_KEY not found - AI features will not work');
+    } else {
+        console.log('✅ OpenAI configuration loaded');
     }
 });
 

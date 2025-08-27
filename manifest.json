@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ClipSwift - Snippet Manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A modern snippet manager for Chrome with rich text editing and organization features",
   "permissions": [
     "storage",

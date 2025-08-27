@@ -3,6 +3,33 @@
 // Handle installation
 chrome.runtime.onInstalled.addListener(function(details) {
     console.log('ClipSwift installed:', details.reason);
+    
+    // Inject content script into all existing tabs
+    chrome.tabs.query({}, function(tabs) {
+        tabs.forEach(function(tab) {
+            if (tab.url && (tab.url.startsWith('http://') || tab.url.startsWith('https://'))) {
+                chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    files: ['content.js']
+                }).catch(function(error) {
+                    console.log('Could not inject into tab:', tab.url, error);
+                });
+            }
+        });
+    });
+});
+
+// Inject content script when new tabs are created or updated
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    if (changeInfo.status === 'complete' && tab.url && 
+        (tab.url.startsWith('http://') || tab.url.startsWith('https://'))) {
+        chrome.scripting.executeScript({
+            target: { tabId: tabId },
+            files: ['content.js']
+        }).catch(function(error) {
+            console.log('Could not inject into updated tab:', tab.url, error);
+        });
+    }
 });
 
 // Handle messages from popup
@@ -20,7 +47,37 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         });
         return true; // Keep message channel open for async response
     }
+    
+    if (request.action === 'injectContentScript') {
+        injectContentScript().then((result) => {
+            sendResponse(result);
+        });
+        return true; // Keep message channel open for async response
+    }
 });
+
+// Inject content script using activeTab permission
+async function injectContentScript() {
+    try {
+        // Get the active tab
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        
+        if (!tab) {
+            return { success: false, error: 'No active tab found' };
+        }
+        
+        // Inject the content script
+        await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['content.js']
+        });
+        
+        return { success: true, tabId: tab.id };
+    } catch (error) {
+        console.error('Failed to inject content script:', error);
+        return { success: false, error: error.message };
+    }
+}
 
 // Verify payment in background
 async function verifyPaymentInBackground(sessionId) {

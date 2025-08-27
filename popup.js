@@ -5,10 +5,33 @@ let currentCategory = 'all';
 let searchQuery = '';
 let currentTheme = 'light';
 // API key for OpenAI - this is your OpenAI API key
-let openaiApiKey = 'YOUR_OPENAI_API_KEY_HERE'; // Replace with your actual API key
+let openaiApiKey = 'sk-proj-YOUR_NEW_API_KEY_HERE'; // Replace with your actual API key
 
 // User tier management
 let userTier = 'free'; // 'free' or 'premium'
+
+// Helper function to inject content script and send message
+async function injectContentScriptAndSendMessage(tabId, message) {
+    try {
+        // First, try to inject the content script
+        const result = await chrome.runtime.sendMessage({ action: 'injectContentScript' });
+        
+        if (result.success) {
+            // Wait a moment for the script to load
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Now send the message
+            await chrome.tabs.sendMessage(tabId, message);
+            return true;
+        } else {
+            console.log('Failed to inject content script:', result.error);
+            return false;
+        }
+    } catch (error) {
+        console.log('Error in injectContentScriptAndSendMessage:', error);
+        return false;
+    }
+}
 
 async function init() {
     await loadSnippets();
@@ -30,11 +53,19 @@ async function loadSnippets() {
     try {
         const result = await chrome.storage.sync.get(['snippets']);
         snippets = result.snippets || [];
+        
+        console.log('Loaded snippets:', snippets.length);
+        console.log('Sample snippets:', snippets.filter(s => s.isSample).length);
+        console.log('User snippets:', snippets.filter(s => !s.isSample).length);
+        
         if (snippets.length === 0) {
+            console.log('No snippets found, creating sample data');
             createSampleData();
         }
+        
         renderSnippetsList();
     } catch (error) {
+        console.log('Error loading snippets, creating sample data');
         createSampleData();
         renderSnippetsList();
     }
@@ -167,14 +198,16 @@ async function saveSnippets() {
                 if (tab.url && (tab.url.startsWith('http://') || tab.url.startsWith('https://'))) {
                     console.log('Sending message to tab:', tab.url);
                     try {
-                        await chrome.tabs.sendMessage(tab.id, { 
+                        const success = await injectContentScriptAndSendMessage(tab.id, { 
                             action: 'updateSnippets',
                             snippets: snippets,
                             userTier: userTier
                         });
-                        notifiedTabs++;
-                        console.log('Successfully notified tab:', tab.url);
-    } catch (error) {
+                        if (success) {
+                            notifiedTabs++;
+                            console.log('Successfully notified tab:', tab.url);
+                        }
+                    } catch (error) {
                         console.log('Could not send message to tab:', tab.url, error);
                     }
                 }
@@ -363,7 +396,14 @@ function createNewSnippet() {
     // Check if free user has reached the limit
     if (userTier === 'free') {
         const userSnippets = snippets.filter(snippet => !snippet.isSample);
+        console.log('Creating new snippet - userTier:', userTier);
+        console.log('Total snippets:', snippets.length);
+        console.log('Sample snippets:', snippets.filter(s => s.isSample).length);
+        console.log('User snippets:', userSnippets.length);
+        console.log('User snippets:', userSnippets.map(s => s.title));
+        
         if (userSnippets.length >= 2) {
+            console.log('Free user limit reached, showing upgrade modal');
             showUpgradeModal();
             return;
         }
@@ -646,30 +686,15 @@ async function generateAiContent() {
     if (generateAiBtn) generateAiBtn.disabled = true;
     
         try {
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            const response = await fetch('https://clipswift-backend-production.up.railway.app/generate-ai-content', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${openaiApiKey}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
-                    messages: [
-                        {
-                            role: 'system',
-                        content: `You are a helpful assistant that can respond to any prompt or comment in the same language and tone as the input. The user has requested a ${tone.toLowerCase()} tone. 
-
-If the tone is "rizz", create flirty, smooth, and charming content that's perfect for dating apps like Tinder or Instagram DMs. Use playful language, emojis, and confident but respectful messaging.
-
-If the user asks you to answer a comment, respond directly to that comment in a ${tone.toLowerCase()} manner. If they ask you to create content, create ${tone.toLowerCase()} content suitable for quick copy-paste use. Keep responses under 200 words unless the context requires more.`
-                        },
-                        {
-                            role: 'user',
-                            content: prompt
-                        }
-                    ],
-                    max_tokens: 200,
-                    temperature: 0.7
+                    prompt: prompt,
+                    category: category,
+                    tone: tone
                 })
             });
 
@@ -678,7 +703,7 @@ If the user asks you to answer a comment, respond directly to that comment in a 
         }
 
                 const data = await response.json();
-        const generatedContent = data.choices[0].message.content.trim();
+        const generatedContent = data.content.trim();
         
         // Save last used settings
         await saveLastAiSettings(category, tone);
@@ -1040,7 +1065,7 @@ async function upgradeUserToPremium() {
             const tabs = await chrome.tabs.query({});
             for (const tab of tabs) {
                 if (tab.url && (tab.url.startsWith('http://') || tab.url.startsWith('https://'))) {
-                    chrome.tabs.sendMessage(tab.id, { action: 'updateSnippets' }).catch(() => {
+                    injectContentScriptAndSendMessage(tab.id, { action: 'updateSnippets' }).catch(() => {
                         // Ignore errors for tabs that don't have content scripts
                     });
                 }
@@ -1227,12 +1252,12 @@ async function confirmDowngrade() {
         for (const tab of tabs) {
             if (tab.url && (tab.url.startsWith('http://') || tab.url.startsWith('https://'))) {
                 try {
-                    await chrome.tabs.sendMessage(tab.id, { 
+                    await injectContentScriptAndSendMessage(tab.id, { 
                         action: 'updateTier', 
                         userTier: 'free',
                         snippets: snippets 
                     });
-    } catch (error) {
+                } catch (error) {
                     // Tab might not have content script, ignore
                 }
             }

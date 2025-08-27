@@ -7,14 +7,8 @@
     "storage",
     "activeTab",
     "windows",
-    "tabs"
-  ],
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_end"
-    }
+    "tabs",
+    "scripting"
   ],
   "commands": {
     "_execute_action": {

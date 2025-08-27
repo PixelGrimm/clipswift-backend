@@ -8,9 +8,11 @@ async function loadSnippets() {
         const result = await chrome.storage.sync.get(['snippets', 'userTier']);
         snippets = result.snippets || [];
         userTier = result.userTier || 'free';
+        console.log('Content script: Loaded snippets:', snippets.length, 'userTier:', userTier);
     } catch (error) {
         snippets = [];
         userTier = 'free';
+        console.log('Content script: Error loading snippets:', error);
     }
 }
 
@@ -19,6 +21,8 @@ function checkAutoCompletion(element, text) {
     // Get the current word being typed
     const words = text.split(/\s+/);
     const currentWord = words[words.length - 1];
+    
+    console.log('Content script: Checking auto-completion for:', currentWord, 'in element:', element.tagName);
     
     // First check sample snippets (always available)
     for (const snippet of snippets.filter(s => s.isSample)) {
@@ -260,6 +264,7 @@ function setupMutationObserver() {
 
 // Initialize when DOM is ready
 function init() {
+    console.log('ClipSwift content script initialized on:', window.location.href);
     loadSnippets();
     setupEventListeners();
     setupMutationObserver();
